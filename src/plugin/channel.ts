@@ -55,10 +55,10 @@ function resolveAccount(cfg: ClawdbotConfig): ResolvedAccount {
 const meta = {
   id: "feishu",
   label: "Feishu",
-  selectionLabel: "Feishu/Lark (飞书)",
+  selectionLabel: "Feishu",
   docsPath: "/channels/feishu",
   docsLabel: "feishu",
-  blurb: "飞书/Lark enterprise messaging.",
+  blurb: "Feishu enterprise messaging.",
   aliases: ["lark"] as string[],
   order: 70,
 };
@@ -358,13 +358,9 @@ export const feishuChannel: ChannelPlugin<ResolvedAccount> = {
       ctx.log?.info(`Starting Feishu provider (mode: ${feishuCfg.connectionMode ?? "websocket"})`);
 
       return startGateway({
-        config: feishuCfg,
-        handlers: {
-          // Message handler will be connected in full implementation
-        },
+        cfg: ctx.cfg,
+        runtime: ctx.runtime,
         abortSignal: ctx.abortSignal,
-        onLog: (msg) => ctx.log?.info(msg),
-        onError: (msg) => ctx.log?.error(msg),
       });
     },
   },

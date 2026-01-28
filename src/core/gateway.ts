@@ -3,30 +3,26 @@
  */
 
 import type * as Lark from "@larksuiteoapi/node-sdk";
+import type { ClawdbotConfig, RuntimeEnv, HistoryEntry } from "clawdbot/plugin-sdk";
 import type { Config } from "../config/schema.js";
-import type {
-  EventHandlers,
-  MessageReceivedEvent,
-  BotAddedEvent,
-  BotRemovedEvent,
-} from "../types/index.js";
+import type { MessageReceivedEvent, BotAddedEvent, BotRemovedEvent } from "../types/index.js";
 import { createWsClient, createEventDispatcher, probeConnection } from "../api/client.js";
+import { handleMessage } from "./handler.js";
 
 // ============================================================================
 // Types
 // ============================================================================
 
 export interface GatewayOptions {
-  config: Config;
-  handlers: EventHandlers;
+  cfg: ClawdbotConfig;
+  runtime?: RuntimeEnv;
   abortSignal?: AbortSignal;
-  onLog?: (message: string) => void;
-  onError?: (message: string) => void;
 }
 
 export interface GatewayState {
   botOpenId: string | undefined;
   wsClient: Lark.WSClient | null;
+  chatHistories: Map<string, HistoryEntry[]>;
 }
 
 // ============================================================================
@@ -36,6 +32,7 @@ export interface GatewayState {
 const state: GatewayState = {
   botOpenId: undefined,
   wsClient: null,
+  chatHistories: new Map(),
 };
 
 /**
@@ -54,18 +51,23 @@ export function getBotOpenId(): string | undefined {
  * Connects to Feishu and begins processing events.
  */
 export async function startGateway(options: GatewayOptions): Promise<void> {
-  const { config, handlers, abortSignal, onLog, onError } = options;
-  const log = onLog ?? console.log;
-  const error = onError ?? console.error;
+  const { cfg, runtime, abortSignal } = options;
+  const feishuCfg = cfg.channels?.feishu as Config | undefined;
+  const log = (msg: string) => runtime?.log?.(msg);
+  const error = (msg: string) => runtime?.error?.(msg);
+
+  if (!feishuCfg) {
+    throw new Error("Feishu not configured");
+  }
 
   // Probe to get bot info
-  const probeResult = await probeConnection(config);
+  const probeResult = await probeConnection(feishuCfg);
   if (probeResult.ok) {
     state.botOpenId = probeResult.botOpenId;
     log(`Gateway: bot open_id resolved: ${state.botOpenId ?? "unknown"}`);
   }
 
-  const connectionMode = config.connectionMode ?? "websocket";
+  const connectionMode = feishuCfg.connectionMode ?? "websocket";
   if (connectionMode !== "websocket") {
     log("Gateway: webhook mode not implemented, use HTTP server");
     return;
@@ -73,19 +75,23 @@ export async function startGateway(options: GatewayOptions): Promise<void> {
 
   log("Gateway: starting WebSocket connection...");
 
-  const wsClient = createWsClient(config);
+  const wsClient = createWsClient(feishuCfg);
   state.wsClient = wsClient;
 
-  const eventDispatcher = createEventDispatcher(config);
+  const eventDispatcher = createEventDispatcher(feishuCfg);
 
   // Register event handlers
   eventDispatcher.register({
     "im.message.receive_v1": async (data: unknown) => {
       try {
         const event = data as MessageReceivedEvent;
-        if (handlers.onMessageReceived) {
-          await handlers.onMessageReceived(event);
-        }
+        await handleMessage({
+          cfg,
+          event,
+          botOpenId: state.botOpenId,
+          runtime,
+          chatHistories: state.chatHistories,
+        });
       } catch (err) {
         error(`Gateway: error handling message: ${String(err)}`);
       }
@@ -99,9 +105,6 @@ export async function startGateway(options: GatewayOptions): Promise<void> {
       try {
         const event = data as BotAddedEvent;
         log(`Gateway: bot added to chat ${event.chat_id}`);
-        if (handlers.onBotAdded) {
-          await handlers.onBotAdded(event);
-        }
       } catch (err) {
         error(`Gateway: error handling bot added: ${String(err)}`);
       }
@@ -111,9 +114,6 @@ export async function startGateway(options: GatewayOptions): Promise<void> {
       try {
         const event = data as BotRemovedEvent;
         log(`Gateway: bot removed from chat ${event.chat_id}`);
-        if (handlers.onBotRemoved) {
-          await handlers.onBotRemoved(event);
-        }
       } catch (err) {
         error(`Gateway: error handling bot removed: ${String(err)}`);
       }
@@ -158,4 +158,5 @@ export async function startGateway(options: GatewayOptions): Promise<void> {
 export function stopGateway(): void {
   state.wsClient = null;
   state.botOpenId = undefined;
+  state.chatHistories.clear();
 }

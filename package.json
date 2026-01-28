@@ -1,5 +1,5 @@
 {
-    "name": "clawdbot-plugin-feishu",
+    "name": "@samzong/feishu",
     "version": "0.0.1",
     "type": "module",
     "description": "Production-grade Feishu/Lark channel plugin for Clawdbot",
@@ -15,16 +15,13 @@
         "plugin",
         "channel"
     ],
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
     "files": [
-        "dist",
+        "src",
         "clawdbot.plugin.json"
     ],
     "scripts": {
         "build": "tsc",
         "dev": "tsc --watch",
-        "prepare": "npm run build",
         "lint": "eslint src/",
         "lint:fix": "eslint src/ --fix",
         "format": "prettier --write src/",
@@ -36,15 +33,15 @@
     },
     "clawdbot": {
         "extensions": [
-            "./dist/index.js"
+            "./src/index.ts"
         ],
         "channel": {
             "id": "feishu",
             "label": "Feishu",
-            "selectionLabel": "Feishu/Lark (飞书)",
+            "selectionLabel": "Feishu",
             "docsPath": "/channels/feishu",
             "docsLabel": "feishu",
-            "blurb": "飞书/Lark enterprise messaging.",
+            "blurb": "Feishu enterprise messaging.",
             "aliases": [
                 "lark"
             ],

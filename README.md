@@ -1,6 +1,6 @@
 # clawdbot-plugin-feishu
 
-Feishu/Lark (飞书) channel plugin for [Clawdbot](https://github.com/anthropics/clawdbot).
+Feishu channel plugin for [Clawdbot](https://github.com/anthropics/clawdbot).
 
 ## Install
 

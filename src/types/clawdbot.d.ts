@@ -6,11 +6,78 @@
 declare module "clawdbot/plugin-sdk" {
   export const DEFAULT_ACCOUNT_ID: string;
   export const PAIRING_APPROVED_MESSAGE: string;
+  export const DEFAULT_GROUP_HISTORY_LIMIT: number;
 
   export function emptyPluginConfigSchema(): unknown;
   export function addWildcardAllowFrom(allowFrom?: (string | number)[]): (string | number)[];
   export function formatDocsLink(path: string, label: string): string;
 
+  // History management
+  export interface HistoryEntry {
+    sender: string;
+    body: string;
+    timestamp: number;
+    messageId?: string;
+  }
+
+  export function buildPendingHistoryContextFromMap(params: {
+    historyMap: Map<string, HistoryEntry[]>;
+    historyKey: string;
+    limit: number;
+    currentMessage: string;
+    formatEntry: (entry: HistoryEntry) => string;
+  }): string;
+
+  export function recordPendingHistoryEntryIfEnabled(params: {
+    historyMap: Map<string, HistoryEntry[]>;
+    historyKey: string;
+    limit: number;
+    entry: HistoryEntry;
+  }): void;
+
+  export function clearHistoryEntriesIfEnabled(params: {
+    historyMap: Map<string, HistoryEntry[]>;
+    historyKey: string;
+    limit: number;
+  }): void;
+
+  // Reply dispatcher
+  export interface ReplyPayload {
+    text?: string;
+    [key: string]: unknown;
+  }
+
+  export interface ReplyPrefixContext {
+    responsePrefix: string;
+    responsePrefixContextProvider: () => unknown;
+    onModelSelected: (model: string) => void;
+  }
+
+  export function createReplyPrefixContext(params: {
+    cfg: ClawdbotConfig;
+    agentId: string;
+  }): ReplyPrefixContext;
+
+  export interface TypingCallbacks {
+    onReplyStart: () => Promise<void>;
+    onIdle?: () => void;
+  }
+
+  export function createTypingCallbacks(params: {
+    start: () => Promise<void>;
+    stop: () => Promise<void>;
+    onStartError?: (err: unknown) => void;
+    onStopError?: (err: unknown) => void;
+  }): TypingCallbacks;
+
+  export function logTypingFailure(params: {
+    log: (message: string) => void;
+    channel: string;
+    action: string;
+    error: unknown;
+  }): void;
+
+  // Runtime types
   export type DmPolicy = "open" | "pairing" | "allowlist";
 
   export interface RuntimeEnv {
@@ -19,16 +86,85 @@ declare module "clawdbot/plugin-sdk" {
     [key: string]: unknown;
   }
 
+  export interface PluginRuntime {
+    channel: {
+      routing: {
+        resolveAgentRoute(params: {
+          cfg: ClawdbotConfig;
+          channel: string;
+          peer: { kind: string; id: string };
+        }): { sessionKey: string; accountId: string; agentId: string };
+      };
+      reply: {
+        resolveEnvelopeFormatOptions(cfg: ClawdbotConfig): unknown;
+        formatAgentEnvelope(params: {
+          channel: string;
+          from: string;
+          timestamp: Date | number;
+          envelope: unknown;
+          body: string;
+        }): string;
+        finalizeInboundContext(params: Record<string, unknown>): unknown;
+        createReplyDispatcherWithTyping(params: {
+          responsePrefix: string;
+          responsePrefixContextProvider: () => unknown;
+          humanDelay: unknown;
+          onReplyStart: () => Promise<void>;
+          deliver: (payload: ReplyPayload) => Promise<void>;
+          onError: (err: unknown, info: { kind: string }) => void;
+          onIdle?: () => void;
+        }): {
+          dispatcher: unknown;
+          replyOptions: Record<string, unknown>;
+          markDispatchIdle: () => void;
+        };
+        dispatchReplyFromConfig(params: {
+          ctx: unknown;
+          cfg: ClawdbotConfig;
+          dispatcher: unknown;
+          replyOptions: unknown;
+        }): Promise<{ queuedFinal: boolean; counts: { final: number } }>;
+        resolveHumanDelayConfig(cfg: ClawdbotConfig, agentId: string): unknown;
+      };
+      text: {
+        resolveTextChunkLimit(params: {
+          cfg: ClawdbotConfig;
+          channel: string;
+          defaultLimit: number;
+        }): number;
+        resolveChunkMode(cfg: ClawdbotConfig, channel: string): string;
+        resolveMarkdownTableMode(params: {
+          cfg: ClawdbotConfig;
+          channel: string;
+        }): string;
+        convertMarkdownTables(text: string, mode: string): string;
+        chunkTextWithMode(text: string, limit: number, mode: string): string[];
+      };
+    };
+    system: {
+      enqueueSystemEvent(message: string, params: {
+        sessionKey: string;
+        contextKey: string;
+      }): void;
+    };
+    [key: string]: unknown;
+  }
+
   export interface ClawdbotConfig {
     channels?: {
       feishu?: Record<string, unknown>;
       [key: string]: unknown;
     };
+    messages?: {
+      groupChat?: {
+        historyLimit?: number;
+      };
+    };
     [key: string]: unknown;
   }
 
   export interface ClawdbotPluginApi {
-    runtime: RuntimeEnv;
+    runtime: PluginRuntime;
     registerChannel(params: { plugin: ChannelPlugin<unknown> }): void;
   }
 
@@ -145,6 +281,7 @@ declare module "clawdbot/plugin-sdk" {
     startAccount(ctx: {
       cfg: ClawdbotConfig;
       accountId: string;
+      runtime?: RuntimeEnv;
       abortSignal?: AbortSignal;
       setStatus(status: Record<string, unknown>): void;
       log?: { info(msg: string): void; error(msg: string): void };
