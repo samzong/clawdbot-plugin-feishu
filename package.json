@@ -1,6 +1,6 @@
 {
     "name": "@samzong/feishu",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "type": "module",
     "description": "Production-grade Feishu/Lark channel plugin for Clawdbot",
     "license": "MIT",
