@@ -2,7 +2,7 @@
     "id": "feishu",
     "name": "Feishu",
     "description": "Feishu/Lark channel plugin for Moltbot",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "channels": [
         "feishu"
     ],

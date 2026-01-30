@@ -1,8 +1,8 @@
 {
     "name": "moltbot-channel-feishu",
-    "version": "0.0.8",
+    "version": "0.0.9",
     "type": "module",
-    "description": "Production-grade Feishu/Lark channel plugin for Clawdbot",
+    "description": "Production-grade Feishu/Lark channel plugin for Moltbot(Clawdbot)",
     "license": "MIT",
     "repository": {
         "type": "git",
@@ -10,6 +10,7 @@
     },
     "keywords": [
         "clawdbot",
+        "moltbot",
         "feishu",
         "lark",
         "plugin",
