@@ -1,9 +1,9 @@
 /**
- * Type declarations for clawdbot/plugin-sdk.
+ * Type declarations for openclaw/plugin-sdk.
  * This stub allows strict TypeScript compilation against the peer dependency.
  */
 
-declare module "clawdbot/plugin-sdk" {
+declare module "openclaw/plugin-sdk" {
   export const DEFAULT_ACCOUNT_ID: string;
   export const PAIRING_APPROVED_MESSAGE: string;
   export const DEFAULT_GROUP_HISTORY_LIMIT: number;

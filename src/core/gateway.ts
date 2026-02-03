@@ -3,7 +3,7 @@
  */
 
 import * as Lark from "@larksuiteoapi/node-sdk";
-import type { ClawdbotConfig, RuntimeEnv, HistoryEntry } from "clawdbot/plugin-sdk";
+import type { ClawdbotConfig, RuntimeEnv, HistoryEntry } from "openclaw/plugin-sdk";
 import type { Config } from "../config/schema.js";
 import type { MessageReceivedEvent, BotAddedEvent, BotRemovedEvent } from "../types/index.js";
 import { createWsClient, probeConnection } from "../api/client.js";

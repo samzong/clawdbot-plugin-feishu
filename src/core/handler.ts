@@ -3,13 +3,13 @@
  * Integrates with Clawdbot runtime for routing and agent execution.
  */
 
-import type { ClawdbotConfig, RuntimeEnv, HistoryEntry, PluginRuntime } from "clawdbot/plugin-sdk";
+import type { ClawdbotConfig, RuntimeEnv, HistoryEntry, PluginRuntime } from "openclaw/plugin-sdk";
 import {
   buildPendingHistoryContextFromMap,
   recordPendingHistoryEntryIfEnabled,
   clearHistoryEntriesIfEnabled,
   DEFAULT_GROUP_HISTORY_LIMIT,
-} from "clawdbot/plugin-sdk";
+} from "openclaw/plugin-sdk";
 
 import type { Config } from "../config/schema.js";
 import type { MessageReceivedEvent } from "../types/index.js";

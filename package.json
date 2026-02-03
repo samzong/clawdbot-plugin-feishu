@@ -88,7 +88,7 @@
         "@typescript-eslint/eslint-plugin": "^8.0.0",
         "@typescript-eslint/parser": "^8.0.0",
         "@vitest/coverage-v8": "^2.1.9",
-        "clawdbot": "^2026.1.24",
+        "openclaw": "^2026.2.1",
         "dotenv": "^17.2.3",
         "eslint": "^9.0.0",
         "prettier": "^3.8.1",
@@ -99,7 +99,7 @@
         "vitest": "^2.0.0"
     },
     "peerDependencies": {
-        "clawdbot": ">=2026.1.24"
+        "openclaw": ">=2026.2.1"
     },
     "engines": {
         "node": ">=20.0.0"

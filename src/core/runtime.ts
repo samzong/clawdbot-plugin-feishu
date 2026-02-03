@@ -3,7 +3,7 @@
  * Separated to avoid circular dependencies between plugin and core modules.
  */
 
-import type { PluginRuntime } from "clawdbot/plugin-sdk";
+import type { PluginRuntime } from "openclaw/plugin-sdk";
 
 let feishuRuntime: PluginRuntime | null = null;
 

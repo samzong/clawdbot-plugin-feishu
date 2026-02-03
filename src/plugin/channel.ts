@@ -7,8 +7,8 @@ import type {
   ClawdbotConfig,
   ChannelGroupContext,
   GroupToolPolicyConfig,
-} from "clawdbot/plugin-sdk";
-import { DEFAULT_ACCOUNT_ID, PAIRING_APPROVED_MESSAGE } from "clawdbot/plugin-sdk";
+} from "openclaw/plugin-sdk";
+import { DEFAULT_ACCOUNT_ID, PAIRING_APPROVED_MESSAGE } from "openclaw/plugin-sdk";
 
 import type { Config } from "../config/schema.js";
 import { resolveCredentials } from "../config/schema.js";

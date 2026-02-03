@@ -5,12 +5,12 @@
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-import type { ClawdbotConfig, RuntimeEnv, ReplyPayload, PluginRuntime } from "clawdbot/plugin-sdk";
+import type { ClawdbotConfig, RuntimeEnv, ReplyPayload, PluginRuntime } from "openclaw/plugin-sdk";
 import {
   createReplyPrefixContext,
   createTypingCallbacks,
   logTypingFailure,
-} from "clawdbot/plugin-sdk";
+} from "openclaw/plugin-sdk";
 
 import { getRuntime } from "./runtime.js";
 import { sendTextMessage } from "../api/messages.js";
