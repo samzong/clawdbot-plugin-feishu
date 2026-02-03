@@ -1,24 +1,26 @@
 # moltbot-channel-feishu
 
-**Turn Feishu into your AI super-gateway.** A production-grade Feishu/Lark channel plugin for [Moltbot](https://molt.bot) — the brilliant AI agent framework.
+**Turn Feishu into your AI super-gateway.** A production-grade Feishu/Lark channel plugin for [OpenClaw](https://openclaw.ai) / [Moltbot](https://molt.bot) — the brilliant AI agent framework.
 
 ## Install
 
 ```bash
-# npm
+# OpenClaw (recommended)
+openclaw plugins install moltbot-channel-feishu
+
+# Moltbot
 moltbot plugins install moltbot-channel-feishu
 
-# GitHub (for testing)
-moltbot plugins install github:samzong/moltbot-channel-feishu
-
-# if already use clawdbot
+# Clawdbot (legacy)
 clawdbot plugins install moltbot-channel-feishu
-clawdbot plugins install github:samzong/moltbot-channel-feishu
+
+# From GitHub (for testing)
+openclaw plugins install github:samzong/moltbot-channel-feishu
 ```
 
 ## Configure
 
-Edit `~/.clawdbot/clawdbot.json`:
+Edit `~/.openclaw/openclaw.json` (or `~/.moltbot/moltbot.json` / `~/.clawdbot/clawdbot.json`):
 
 ```json
 {

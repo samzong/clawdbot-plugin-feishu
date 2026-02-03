@@ -2,13 +2,14 @@
     "name": "moltbot-channel-feishu",
     "version": "0.0.10",
     "type": "module",
-    "description": "Production-grade Feishu/Lark channel plugin for Moltbot(Clawdbot)",
+    "description": "Production-grade Feishu/Lark channel plugin for OpenClaw/Moltbot/Clawdbot",
     "license": "MIT",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/samzong/moltbot-channel-feishu.git"
     },
     "keywords": [
+        "openclaw",
         "clawdbot",
         "moltbot",
         "feishu",
@@ -23,6 +24,7 @@
     },
     "files": [
         "src",
+        "openclaw.plugin.json",
         "moltbot.plugin.json",
         "clawdbot.plugin.json"
     ],
@@ -39,7 +41,25 @@
         "clean": "rm -rf dist",
         "prerelease": "npm run lint && npm run build && npm run test && node --check dist/index.js && echo '✅ All checks passed'",
         "dev:local": "tsx scripts/local-test.ts",
-        "version": "node scripts/sync-version.js && git add moltbot.plugin.json clawdbot.plugin.json"
+        "user-auth": "tsx scripts/user-auth.ts",
+        "version": "node scripts/sync-version.js && git add openclaw.plugin.json moltbot.plugin.json clawdbot.plugin.json"
+    },
+    "openclaw": {
+        "extensions": [
+            "./src/index.ts"
+        ],
+        "channel": {
+            "id": "feishu",
+            "label": "Feishu",
+            "selectionLabel": "Feishu",
+            "docsPath": "/channels/feishu",
+            "docsLabel": "feishu",
+            "blurb": "Feishu enterprise messaging.",
+            "aliases": [
+                "lark"
+            ],
+            "order": 70
+        }
     },
     "clawdbot": {
         "extensions": [

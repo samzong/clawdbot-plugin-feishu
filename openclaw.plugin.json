@@ -1,0 +1,33 @@
+{
+    "id": "moltbot-channel-feishu",
+    "name": "Feishu",
+    "description": "Feishu/Lark channel plugin for Moltbot",
+    "version": "0.0.10",
+    "channels": [
+        "feishu"
+    ],
+    "configSchema": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+            "appId": {
+                "type": "string",
+                "description": "Feishu App ID"
+            },
+            "appSecret": {
+                "type": "string",
+                "description": "Feishu App Secret"
+            }
+        }
+    },
+    "uiHints": {
+        "appId": {
+            "label": "App ID",
+            "placeholder": "cli_xxxxxxxx"
+        },
+        "appSecret": {
+            "label": "App Secret",
+            "sensitive": true
+        }
+    }
+}

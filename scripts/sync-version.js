@@ -11,8 +11,8 @@ const root = join(__dirname, '..');
 
 const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'));
 
-// Sync both manifest files
-for (const name of ['moltbot.plugin.json', 'clawdbot.plugin.json']) {
+// Sync all manifest files
+for (const name of ['openclaw.plugin.json', 'moltbot.plugin.json', 'clawdbot.plugin.json']) {
     const path = join(root, name);
     const manifest = JSON.parse(readFileSync(path, 'utf8'));
     manifest.version = pkg.version;
